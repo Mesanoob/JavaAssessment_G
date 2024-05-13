@@ -7,14 +7,14 @@ import java.util.List;
 import java.util.Map;
 
 public class Student
-    extends Person
-    implements Evaluation
+        extends Person
+        implements Evaluation
 {
     private double average;
 
     private final List<Course> courses = new ArrayList<>();
-
-    private final Map<String, Course> approvedCourses = new HashMap<>();
+    public List<Course> passed = new ArrayList<>();
+    public final Map<String, Course> approvedCourses = new HashMap<>(); //private -> public
 
     public Student( String id, String name, String email, Date birthDate )
     {
@@ -24,6 +24,8 @@ public class Student
     public void enrollToCourse( Course course )
     {
         //TODO implement this method
+        registerApprovedCourse(course);
+        courses.add(course);
     }
 
     public void registerApprovedCourse( Course course )
@@ -34,33 +36,43 @@ public class Student
     public boolean isCourseApproved( String courseCode )
     {
         //TODO implement this method
-        return false;
+        return approvedCourses.containsKey(courseCode);
     }
 
-    // CHALLENGE IMPLEMENTATION: Read README.md to find instructions on how to solve. 
-    public List<Course> findPassedCourses( Course course )
+    // CHALLENGE IMPLEMENTATION: Read README.md to find instructions on how to solve.
+    public void findPassedCourses(Course course ) // made this method void
     {
         //TODO implement this method
-        return null;
+        passed.add(course);
     }
 
     public boolean isAttendingCourse( String courseCode )
     {
         //TODO implement this method
+        for(Course c : courses){
+            if(c.getCode().equals(courseCode)) return true;
+        }
         return false;
     }
 
     @Override
     public double getAverage()
     {
-        return average;
+        for (Course course : passed) {
+            average += course.getCredits();
+        }
+        return average/ passed.size();
     }
 
     @Override
     public List<Course> getApprovedCourses()
     {
         //TODO implement this method
-        return null;
+        List<Course> Approved = new ArrayList<>();
+        for (String key : approvedCourses.keySet()) {
+            Approved.add(approvedCourses.get(key));
+        }
+        return Approved;
     }
 
     @Override
