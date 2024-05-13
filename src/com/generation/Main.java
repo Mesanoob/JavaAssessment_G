@@ -7,13 +7,14 @@ import com.generation.service.StudentService;
 import com.generation.utils.PrinterHelper;
 
 import java.text.ParseException;
+import java.util.Objects;
 import java.util.Scanner;
 
 public class Main
 {
 
     public static void main( String[] args )
-        throws ParseException
+            throws ParseException
     {
         StudentService studentService = new StudentService();
         CourseService courseService = new CourseService();
@@ -85,9 +86,38 @@ public class Main
         studentService.showSummary();
     }
 
-    private static void gradeStudent( StudentService studentService, Scanner scanner )
+    private static void gradeStudent( StudentService studentService, Scanner scanner ) //heavily modified
     {
+        System.out.println("Enter Student Id --> ");
+        String sid = scanner.next();
 
+        if(studentService.isSubscribed(sid)){
+            Student s = studentService.findStudent(sid);
+            System.out.println("Enter the courseId --> ");
+            String courseId = scanner.next();
+
+            System.out.println("Enter credits --> ");
+            double cred = scanner.nextDouble();
+
+            if(s.isAttendingCourse(courseId) && s.isCourseApproved(courseId)){
+                for(Course c : s.getApprovedCourses()){
+                    if(Objects.equals(c.getCode(), courseId)){
+                        System.out.println("student " + sid + " awarded " + cred + " credits for course ID " + courseId);
+                        if(cred >= c.getCredits()) {
+                            s.findPassedCourses(c);
+                            System.out.println("Student Passed the subject");
+                        }else{
+                            System.out.println("Not Enough Credits to pass the subject.");
+                        }
+                    }
+                }
+            }else{
+                System.out.println("Not enrolled in this course or course not approved.");
+            }
+
+        }else{
+            System.out.println("Student is not subscribed.");
+        }
     }
 
     private static void findStudent( StudentService studentService, Scanner scanner )
@@ -107,7 +137,7 @@ public class Main
     }
 
     private static void registerStudent( StudentService studentService, Scanner scanner )
-        throws ParseException
+            throws ParseException
     {
         Student student = PrinterHelper.createStudentMenu( scanner );
         studentService.subscribeStudent( student );

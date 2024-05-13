@@ -24,11 +24,10 @@ public class PrinterHelper
         System.out.println( "| . 6 Show Courses Summary      |" );
         System.out.println( "| . 7 Exit                      |" );
         System.out.println( "|-------------------------------|" );
+        System.out.println("Select an action : ");
     }
 
-    public static Student createStudentMenu( Scanner scanner )
-        throws ParseException
-    {
+    public static Student createStudentMenu( Scanner scanner ) {
         System.out.println( "|-------------------------------------|" );
         System.out.println( "| . 1 Register Student                |" );
         System.out.println( "|-------------------------------------|" );
@@ -38,10 +37,25 @@ public class PrinterHelper
         String id = scanner.next();
         System.out.println( "| Enter student email:                |" );
         String email = scanner.next();
-        System.out.println( "| Enter student birth date(mm/dd/yyyy)|" );
-        DateFormat formatter = new SimpleDateFormat( "mm/dd/yyyy");
-        //TODO validate date format and catch exception to avoid crash
-        Date birthDate = formatter.parse( scanner.next());
+
+        DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        Date birthDate = null;
+
+        boolean validInput = false;
+
+        while (!validInput) {
+            System.out.println("| Enter student birth date (dd/MM/yyyy)|");
+            String inputDate = scanner.next();
+
+            try {
+                birthDate = formatter.parse(inputDate);
+                validInput = true;
+            } catch (ParseException e) {
+                System.out.println("Invalid date format. Please enter a date in the format (dd/MM/yyyy).");
+            }
+        }
+
+
         System.out.println( "|-------------------------------------|" );
         Student student = new Student( id, name, email, birthDate );
         System.out.println( "Student Successfully Registered! " );
